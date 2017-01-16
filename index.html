@@ -10,15 +10,15 @@
             var p = y * w + x;
             if (arr[p] >= 4) {
               arr[p] -= 4;
-	      if (x > 0) { arr[y * w + (x - 1)] += 1; }
-	      if (x < w) { arr[y * w + (x + 1)] += 1; }
-	      if (y > 0) { arr[(y - 1) * w + x] += 1; }
-	      if (y < h) { arr[(y + 1) * w + x] += 1; }
-	      found = true;
-	    }
+              if (x > 0) { arr[y * w + (x - 1)] += 1; }
+              if (x < w) { arr[y * w + (x + 1)] += 1; }
+              if (y > 0) { arr[(y - 1) * w + x] += 1; }
+              if (y < h) { arr[(y + 1) * w + x] += 1; }
+              found = true;
+            }
           }
         }
-	return found;
+        return found;
       }
 
       // Given a function of (u, v) position, paint a canvas with a
@@ -29,11 +29,11 @@
         var w = canvas.width;
         var h = canvas.height;
 
-	var arr = new Array(w * h);
+        var arr = new Array(w * h);
         arr.fill(0);
-	arr[(h / 2) * w + (w / 2)] = n;
+        arr[(h / 2) * w + (w / 2)] = n;
         while (iter(arr, w, h)) {
-	}
+        }
 
         // Write the data to the image buffer.  Function value becomes
         // hue.
