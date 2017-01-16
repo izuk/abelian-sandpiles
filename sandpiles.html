@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Graph thing</title>
+    <script type="text/javascript">
+      function iter(arr, w, h) {
+        var found = false;
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            var p = y * w + x;
+            if (arr[p] >= 4) {
+              arr[p] -= 4;
+	      if (x > 0) { arr[y * w + (x - 1)] += 1; }
+	      if (x < w) { arr[y * w + (x + 1)] += 1; }
+	      if (y > 0) { arr[(y - 1) * w + x] += 1; }
+	      if (y < h) { arr[(y + 1) * w + x] += 1; }
+	      found = true;
+	    }
+          }
+        }
+	return found;
+      }
+
+      // Given a function of (u, v) position, paint a canvas with a
+      // heatmap of function values.
+      function paint(id, n) {
+        var canvas = document.getElementById(id);
+        var ctx = canvas.getContext('2d');
+        var w = canvas.width;
+        var h = canvas.height;
+
+	var arr = new Array(w * h);
+        arr.fill(0);
+	arr[(h / 2) * w + (w / 2)] = n;
+        while (iter(arr, w, h)) {
+	}
+
+        // Write the data to the image buffer.  Function value becomes
+        // hue.
+        var data = ctx.getImageData(0, 0, w, h);
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            var p = y * w + x;
+            var value = arr[p] * 80;
+            var pos = p * 4;
+            data.data[pos + 0] = value;
+            data.data[pos + 1] = value;
+            data.data[pos + 2] = value;
+            data.data[pos + 3] = 255;
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <canvas id='canvas' width='250' height='250'></canvas>
+    </div>
+    <script>
+      paint('canvas', 100000);
+    </script>
+  </body>
+</html>
