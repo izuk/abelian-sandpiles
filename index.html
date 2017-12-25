@@ -1,19 +1,28 @@
 <!doctype html>
 <html>
   <head>
-    <title>Graph thing</title>
+    <title>Abelian Sandpiles</title>
     <script type="text/javascript">
+
+      // Scan the array, spilling piles with size > 4.  Return true if
+      // any piles spilled.
       function iter(arr, w, h) {
         var found = false;
         for (var y = 0; y < h; y++) {
           for (var x = 0; x < w; x++) {
             var p = y * w + x;
+            var v = arr[p];
+            if (v < 4) {
+              continue;
+            }
+            var r = v % 4;
+            var d = (v - r) / 4;
             if (arr[p] >= 4) {
-              arr[p] -= 4;
-              if (x > 0) { arr[y * w + (x - 1)] += 1; }
-              if (x < w) { arr[y * w + (x + 1)] += 1; }
-              if (y > 0) { arr[(y - 1) * w + x] += 1; }
-              if (y < h) { arr[(y + 1) * w + x] += 1; }
+              arr[p] = r;
+              if (x > 0) { arr[p - 1] += d; }
+              if (x < w) { arr[p + 1] += d; }
+              if (y > 0) { arr[p - w] += d; }
+              if (y < h) { arr[p + w] += d; }
               found = true;
             }
           }
@@ -21,8 +30,8 @@
         return found;
       }
 
-      // Given a function of (u, v) position, paint a canvas with a
-      // heatmap of function values.
+      // Spill a central sandpile with given size to completion, and paint to
+      // a canvas.
       function paint(id, n) {
         var canvas = document.getElementById(id);
         var ctx = canvas.getContext('2d');
@@ -35,14 +44,12 @@
         while (iter(arr, w, h)) {
         }
 
-        // Write the data to the image buffer.  Function value becomes
-        // hue.
         var data = ctx.getImageData(0, 0, w, h);
         for (var y = 0; y < h; y++) {
           for (var x = 0; x < w; x++) {
             var p = y * w + x;
-            var value = arr[p] * 80;
             var pos = p * 4;
+            var value = arr[p] * 80;
             data.data[pos + 0] = value;
             data.data[pos + 1] = value;
             data.data[pos + 2] = value;
@@ -55,10 +62,10 @@
   </head>
   <body>
     <div>
-      <canvas id='canvas' width='250' height='250'></canvas>
+      <canvas id='canvas' width='400' height='400'></canvas>
     </div>
     <script>
-      paint('canvas', 100000);
+      paint('canvas', 250000);
     </script>
   </body>
 </html>
