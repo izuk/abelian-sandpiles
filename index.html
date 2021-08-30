@@ -7,49 +7,39 @@
       // Scan the array, spilling piles with size > 4.  Return true if
       // any piles spilled.
       function iter(arr, w, h) {
-        var found = false;
-        for (var y = 0; y < h; y++) {
-          for (var x = 0; x < w; x++) {
-            var p = y * w + x;
-            var v = arr[p];
+        let found = false;
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const p = y * w + x;
+            const v = arr[p];
             if (v < 4) {
               continue;
             }
-            var r = v % 4;
-            var d = (v - r) / 4;
-            if (arr[p] >= 4) {
-              arr[p] = r;
-              if (x > 0) { arr[p - 1] += d; }
-              if (x < w) { arr[p + 1] += d; }
-              if (y > 0) { arr[p - w] += d; }
-              if (y < h) { arr[p + w] += d; }
-              found = true;
-            }
+            const r = v % 4;
+            const d = (v - r) / 4;
+            arr[p] = r;
+            if (x > 0) { arr[p - 1] += d; }
+            if (x < w) { arr[p + 1] += d; }
+            if (y > 0) { arr[p - w] += d; }
+            if (y < h) { arr[p + w] += d; }
+            found = true;
           }
         }
         return found;
       }
 
-      // Spill a central sandpile with given size to completion, and paint to
-      // a canvas.
-      function paint(id, n) {
-        var canvas = document.getElementById(id);
-        var ctx = canvas.getContext('2d');
-        var w = canvas.width;
-        var h = canvas.height;
-
-        var arr = new Array(w * h);
-        arr.fill(0);
-        arr[(h / 2) * w + (w / 2)] = n;
-        while (iter(arr, w, h)) {
-        }
-
-        var data = ctx.getImageData(0, 0, w, h);
-        for (var y = 0; y < h; y++) {
-          for (var x = 0; x < w; x++) {
-            var p = y * w + x;
-            var pos = p * 4;
-            var value = arr[p] * 80;
+      // Paint an array into a canvas.
+      function paint(id, arr) {
+        let canvas = document.getElementById(id);
+        const w = canvas.width;
+        const h = canvas.height;
+        const ctx = canvas.getContext('2d');
+        let data = ctx.getImageData(0, 0, w, h);
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const p = y * w + x;
+            const pos = p * 4;
+            const value = arr[p] * 80;
             data.data[pos + 0] = value;
             data.data[pos + 1] = value;
             data.data[pos + 2] = value;
@@ -58,6 +48,20 @@
         }
         ctx.putImageData(data, 0, 0);
       }
+
+      // Spill a central sandpile with given size to completion.
+      function sandpile(id, n) {
+        let canvas = document.getElementById(id);
+        const w = canvas.width;
+        const h = canvas.height;
+
+        let arr = new Array(w * h);
+        arr.fill(0);
+        arr[(h / 2) * w + (w / 2)] = n;
+        while (iter(arr, w, h)) { }
+
+        paint(id, arr);
+      }
     </script>
   </head>
   <body>
@@ -65,7 +69,7 @@
       <canvas id='canvas' width='400' height='400'></canvas>
     </div>
     <script>
-      paint('canvas', 250000);
+      sandpile('canvas', 250000);
     </script>
   </body>
 </html>
